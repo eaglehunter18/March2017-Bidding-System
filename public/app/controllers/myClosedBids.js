@@ -6,12 +6,13 @@ var app=angular.module('myApp');
 app.controller('myClosedBids',myClosedBids);
 function myClosedBids($scope,QueryService)
 {
+    var username = {
+        username: sessionStorage.getItem("username")
+    }
 
-    QueryService.query('GET', 'api/v1/products/myclosedbids', {})
+
+    QueryService.query('POST', 'api/v1/products/myclosedbids',username)
         .then(function(data) {
-            if( data.isEmpty() ){
-                console.log( 'empty' );
-            }
             console.log(data.data);
             $scope.myData=data.data;
         }, function(error) {

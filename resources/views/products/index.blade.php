@@ -13,7 +13,7 @@
             <td>
                 {{'product Desc : '  . $myproduct->desc}}
             </td>
-
+            {{'product id : '  . $myproduct->id}}
             <td>
                 <a href="/api/v1/products/deleteProduct/{{$myproduct->id}}">Delete</a>
             </td>

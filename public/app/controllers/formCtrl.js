@@ -5,9 +5,7 @@ angular
     .module('myApp').controller('formCtrl',function($scope,QueryService,$route)
 {
 
-    $("#datetimepicker1").datetimepicker({
 
-    })
 
 // get not statred bids  from server
     QueryService.query('GET', 'api/v1/products/getUnstatrted', {})
@@ -22,12 +20,17 @@ angular
 
    $scope.bids=[];
    $scope.myData=$scope.bids;
-
+    $("#datetimepicker1").datetimepicker({
+     format : "YYYY-MM-DD hh:mm:ss"
+    })
     $scope.addRow = function(){
+        var dat = document.getElementById('startTime').value;
+        console.log(dat);
+        // dat1=new Date(dat);
         var newBid={
             'productName':$scope.productName,
             'productDesc': $scope.productDesc,
-            'startTime':$scope.startTime,
+            'startTime':dat,
             'period': $scope.period,
             'incUnit':$scope.incUnit ,
             'price':$scope.price ,
@@ -38,12 +41,12 @@ angular
             console.log('test');
           //  $route.reload();
         }
+        //console.log(newBid1);
         var newBid1={
             name:$scope.productName,
             desc: $scope.productDesc,
-            startTime:$scope.startTime,
+            startTime:dat,
             period: $scope.period,
-            startTime:$scope.startTime,
             incUnit:$scope.incUnit ,
             price:$scope.price,
             status:$scope.checkboxmodel
@@ -53,7 +56,7 @@ angular
 
         QueryService.query('POST', 'api/v1/products/addProduct', newBid1)
             .then(function(data) {
-                console.log(data);
+                console.log(data.data);
                // $route.reload();
             }, function(error) {
                 console.log(error);
@@ -63,9 +66,7 @@ angular
 //empty scope for next  bid
         $scope.productName='';
         $scope.productDesc='';
-        $scope.startTime='';
         $scope.period='';
-        $scope.startTime='';
         $scope.incUnit='';
 
         $('#myModal').modal('hide');

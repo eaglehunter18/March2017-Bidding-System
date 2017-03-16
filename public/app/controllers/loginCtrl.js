@@ -6,12 +6,15 @@
 
     LoginController.$inject = ['$scope' , 'QueryService','$location'];
 
-    function LoginController($scope,QueryService,$location) {
 
+
+    function LoginController($scope,QueryService,$location) {
+        if( sessionStorage.getItem("username") == '' || sessionStorage.getItem("username") == null  ){
         $scope.loginErrorText = '';
         $scope.loginError = false;
 
         $scope.login = function () {
+
             var credentials = {
                 name: $scope.name,
                 pass: $scope.pass
@@ -20,15 +23,16 @@
             QueryService.query('POST', 'api/v1/user/login', credentials)
                 .then(function(data) {
 
-                    if (data.data == "200") {
-                        // $location.path("/api/v1/products/");
-                        // $window.location.href = '/api/v1/products/Uindex';
-                       $location.path("/all-bids-user");
+                    if (data.data == "Error trying to bind: Invalid credentials") {
                         console.log(data.data);
-                    } else {
-                       console.log(data);
                         $scope.loginError = true;
                         $scope.loginErrorText = data.data;
+                    } else {
+                        var user=data.data;
+                         var username =user.replace(/"(.+)"/g, '$1');
+                        sessionStorage.setItem('username' , username);
+                        $location.path("/all-bids-user");
+
 
                     }
                 }, function(error) {
@@ -37,8 +41,30 @@
 
 
         }
+    }else
+        {
+            $location.path("/all-bids-user");
+        }
 
     }
+    //
+    // app.factory('Session', function($http) {
+    //     var Session = {
+    //         data: {},
+    //         saveSession: function() { /* save session data to db */ },
+    //         updateSession: function() {
+    //             /* load data from db */
+    //             $http.get('session.json')
+    //                 .then(function(r) { return Session.data = r.data;})
+    //         }
+    //     };
+    //     Session.updateSession();
+    //     return Session;
+    // });
+
+
+
+
 })();
 
 

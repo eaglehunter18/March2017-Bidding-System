@@ -52,6 +52,12 @@ app.config(function($routeProvider,$httpProvider){
             css: ['css/css.css','css/style.css'],
             controllerAs: 'main'
         })
+        .when('/logout',{
+            templateUrl:"partials/login.html",
+            controller:"LogoutController",
+            css: ['css/css.css','css/style.css'],
+            controllerAs: 'main'
+        })
 
 
         .otherwise({

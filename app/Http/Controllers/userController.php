@@ -37,7 +37,7 @@ class userController extends Controller
 
 
         if ($request->isMethod('post')) {
-           // $ldap = ldap_connect("ldap://172.22.1.70");
+            // $ldap = ldap_connect("ldap://172.22.1.70");
 
             $ldap = @ldap_connect("ldap://asaltech.com", '389')
             or die("Could not connect to LDAP server.");
@@ -62,7 +62,7 @@ class userController extends Controller
 
 
                     }
-                    $response=200;
+                    $response=$request->input("name");
 
 
                 }catch (Exception $e){

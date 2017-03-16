@@ -5,14 +5,15 @@
         .module('myApp')
         .controller('user', user);
 
-    user.$inject = ['$scope' , 'QueryService','$interval'];
+    user.$inject = ['$scope' , 'QueryService','$interval','$location'];
 
-    function user($scope,QueryService,$interval) {
-
+    function user($scope,QueryService,$interval,$location) {
+       // sessionStorage.getItem("username");
         QueryService.query('GET', 'api/v1/products/Uindex', {})
             .then(function (data) {
 
                 $scope.myData = data.data;
+                console.log(data.data);
 
             }, function (error) {
                 console.log(error);
@@ -67,6 +68,9 @@
 
 // ..................................................................................
         $scope.inc = function(index,current,incrementUnit) {
+            if( $scope.myData[index]["maxCurrentBid"]==null){
+
+            }
             console.log(current,incrementUnit);
             var newCurrent=current+incrementUnit;
             $scope.myData[index]["maxCurrentBid"]=newCurrent;
@@ -81,22 +85,27 @@
         }
 
         $scope.bid = function (index,BidID) {
-            confirm("you bid on " + $scope.myData[index]["productName"] + " with price " + $scope.myData[index]["maxCurrentBid"] + "$");
-            var newPrice=$scope.myData[index]["maxCurrentBid"];
+            console.log(sessionStorage.getItem("username"));
+             if(sessionStorage.getItem("username") == "" || sessionStorage.getItem("username") == null){
+                $location.path("/login");
+            }else {
+                 confirm("you bid on " + $scope.myData[index]["productName"] + " with price " + $scope.myData[index]["maxCurrentBid"] + "$");
+                 var newPrice=$scope.myData[index]["maxCurrentBid"];
 
-            var credentials = {
-                BidID: BidID,
-                newPrice:newPrice
+                 var credentials = {
+                    BidID: BidID,
+                    username: sessionStorage.getItem("username"),
+                    newPrice: newPrice
+                }
+
+                QueryService.query('post', 'api/v1/products/bidProduct', credentials)
+                    .then(function (data) {
+                        console.log(data.data);
+                    }, function (error) {
+                        console.log(error);
+                    });
+
             }
-
-            QueryService.query('post', 'api/v1/products/bidProduct', credentials)
-                .then(function (data) {
-                    console.log(data.data);
-                }, function (error) {
-                    console.log(error);
-                });
-
-
         }
     }
 

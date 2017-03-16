@@ -142,11 +142,13 @@ class mainController extends Controller
         if ($request->isMethod('post')) {
             $product_id=  $request->input('BidID');
             $bid_id=  $request->input('newPrice');
-            echo $product_id;
-            DB::transaction(function () use ($request, $product_id, $bid_id) {
+            $username=  $request->input('username');
+            echo $username;
+
+            DB::transaction(function () use ($request, $product_id, $bid_id,$username) {
 
               //  $userName = Session::get('name');
-                $userId = User::where('name', 'hhamra')->lockForUpdate()->value('id');
+                $userId = User::where('name', $username)->lockForUpdate()->value('id');
                 echo $userId;
 
                 $newTransaction = new Transaction();
@@ -169,7 +171,7 @@ class mainController extends Controller
     public function Uindex()
     {
 
-        $userName = Session::get('name');
+//        $userName = Session::get('name');
         //  echo 'userName' . $userName;
         try {
             $statusCode = 200;
@@ -178,9 +180,8 @@ class mainController extends Controller
             foreach ($bids as $bid) {
                 $productName = Product::where('id', $bid->product_id)->value('name');
                 $productDesc = Product::where('id', $bid->product_id)->value('desc');
-                $Particpant = Transaction::where('product_id', $bid->product_id)->get();
                 $maxCurrentBid = Transaction::where('product_id', $bid->product_id)->max('bidValue');
-                $numofParticpant = count($Particpant);
+
 
 
                 $response [] = [
@@ -192,7 +193,6 @@ class mainController extends Controller
                     'winner_id' => $bid->winner_id,
                     'productName' => $productName,
                     'productDesc' => $productDesc,
-                    'numofParticpant' => $numofParticpant,
                     'maxCurrentBid' => $maxCurrentBid,
 
                 ];
@@ -215,14 +215,15 @@ class mainController extends Controller
 
 
     //return user closed bids
-    public function myclosedbids()
+    public function myclosedbids(Request $request)
     {
-        {
+
             try {
                 $statusCode = 200;
                 //$userId=Session::get('id');
 //                $userName = Session::get('name');
-                $userId = User::where('name', 'hhamra')->value('id');
+                $username=  $request->input('username');
+                $userId = User::where('name', $username)->value('id');
                 $transactions = Transaction::where('user_id', $userId)->where('isdeleted', 1)->get();
 
 
@@ -249,7 +250,8 @@ class mainController extends Controller
 
                     ];
                 }
-            } catch (Exception $e) {
+            }
+            catch (Exception $e) {
                 $statusCode = 400;
             } finally {
                 return Response::json($response, $statusCode);
@@ -258,16 +260,17 @@ class mainController extends Controller
 
 //        $arr = Array('transactions' => $transactions);
 //        return view('products.mybids', $arr);
-        }
+
     }
 
 //return user open bids
-    public function mybids()
+    public function mybids(Request $request)
     {
         try {
             //$userId=Session::get('id');
             //$userName = Session::get('name');
-            $userId = User::where('name', 'hhamra')->value('id');
+            $username=  $request->input('username');
+            $userId = User::where('name',$username )->value('id');
             $transactions = Transaction::where('user_id', $userId)->where('isdeleted', 0)->get();
 
             $statusCode = 200;
@@ -288,7 +291,8 @@ class mainController extends Controller
                     'productName' => $productName,
                     'productDesc' => $productDesc,
                     'maxBid' => $maxCurrentBid,
-                    'numofParticpant'=> $numofParticpant
+                    'numofParticpant'=> $numofParticpant,
+                    'transaction' =>$transaction
 
 
                 ];

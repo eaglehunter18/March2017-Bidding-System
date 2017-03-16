@@ -14,7 +14,7 @@
 //    return View::make('index');
 //});
 Route::group(array('prefix'=>'api/v1'),function(){
-
+    Route::post('products/myclosedbids','mainController@myclosedbids');
     Route::post('products/changeToStarted','mainController@changeToStarted');
         Route::get('products/getUnstatrted','mainController@getUnstatrted');
     Route::post('products/close','mainController@close');
@@ -28,10 +28,9 @@ Route::resource('transaction','transactionController');
 Route::resource('bid','bidController');
 
        Route::get('products/runningbids','mainController@runningbids');
-    Route::get('products/myclosedbids','mainController@myclosedbids');
      Route::get('products/closedbids','mainController@closedbids');
 
-Route::get('products/mybids','mainController@mybids');
+Route::post('products/mybids','mainController@mybids');
 Route::get('products/Uindex','mainController@Uindex');
 Route::get('products/history','mainController@history');
 Route::post('products/addProduct','mainController@create');
